@@ -53,7 +53,7 @@ const InsightsSection: React.FC<InsightsSectionProps> = ({ title, items, type })
                 <p className="text-sm text-muted-foreground">
                   <span className="font-medium">Expected Impact:</span> {rec.expectedImpact}
                 </p>
-                {rec.affectedStudents.length > 0 && (
+                {rec.affectedStudents && rec.affectedStudents.length > 0 && (
                   <p className="text-sm text-muted-foreground">
                     <span className="font-medium">Affected Students:</span> {rec.affectedStudents.join(", ")}
                   </p>
