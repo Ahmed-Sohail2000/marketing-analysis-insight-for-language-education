@@ -12,10 +12,12 @@ import { showSuccess, showError } from "@/utils/toast";
 
 const MarketingAnalysisForm: React.FC = () => {
   const [csvFile, setCsvFile] = useState<File | null>(null);
-  const [webhookUrl, setWebhookUrl] = useState<string>("");
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Get n8n webhook URL from environment variable
+  const n8nWebhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -25,19 +27,13 @@ const MarketingAnalysisForm: React.FC = () => {
     }
   };
 
-  const handleWebhookUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setWebhookUrl(event.target.value);
-    setError(null);
-    setAnalysisResult(null);
-  };
-
   const handleSubmit = async () => {
     if (!csvFile) {
       showError("Please select a CSV file.");
       return;
     }
-    if (!webhookUrl) {
-      showError("Please enter an n8n webhook URL.");
+    if (!n8nWebhookUrl) {
+      showError("n8n Webhook URL is not configured. Please set the VITE_N8N_WEBHOOK_URL environment variable.");
       return;
     }
 
@@ -53,7 +49,7 @@ const MarketingAnalysisForm: React.FC = () => {
           const data = results.data;
 
           try {
-            const response = await fetch(webhookUrl, {
+            const response = await fetch(n8nWebhookUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -102,19 +98,9 @@ const MarketingAnalysisForm: React.FC = () => {
           <Label htmlFor="csv-file">Upload Student Data (CSV)</Label>
           <Input id="csv-file" type="file" accept=".csv" onChange={handleFileChange} />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="webhook-url">n8n Webhook URL</Label>
-          <Input
-            id="webhook-url"
-            type="url"
-            placeholder="e.g., https://your-n8n-instance.com/webhook/..."
-            value={webhookUrl}
-            onChange={handleWebhookUrlChange}
-          />
-        </div>
         <Button
           onClick={handleSubmit}
-          disabled={loading || !csvFile || !webhookUrl}
+          disabled={loading || !csvFile || !n8nWebhookUrl}
           className="w-full"
         >
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
