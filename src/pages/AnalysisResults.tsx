@@ -8,8 +8,9 @@ import KeyMetricsDisplay from "@/components/analysis/KeyMetricsDisplay";
 import InsightsSection from "@/components/analysis/InsightsSection";
 import AtRiskStudentsTable from "@/components/analysis/AtRiskStudentsTable";
 import CompletionRateChart from "@/components/analysis/CompletionRateChart";
+import PercentageCard from "@/components/analysis/PercentageCard"; // Import the new component
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge"; // Added this import
+import { Badge } from "@/components/ui/badge";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 
 const AnalysisResults: React.FC = () => {
@@ -70,9 +71,19 @@ const AnalysisResults: React.FC = () => {
 
         <AtRiskStudentsTable students={analysisData.atRiskStudents} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> {/* Adjusted grid for more charts */}
           <CompletionRateChart lowCompletionPercentage={lowCompletionPercentage} />
-          <Card>
+          <PercentageCard
+            title="Average Attendance Rate"
+            value={analysisData.keyMetrics.averageAttendanceRate}
+            description="Overall student attendance across all programs."
+          />
+          <PercentageCard
+            title="Payment Collection Rate"
+            value={analysisData.keyMetrics.paymentCollectionRate}
+            description="Percentage of total revenue successfully collected."
+          />
+          <Card className="lg:col-span-3"> {/* Forecasts card spans full width on large screens */}
             <CardHeader>
               <CardTitle>Forecasts</CardTitle>
             </CardHeader>
