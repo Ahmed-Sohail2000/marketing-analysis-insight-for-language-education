@@ -6,15 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { showSuccess, showError } from "@/utils/toast";
+import { useNavigate } from "react-router-dom";
+import { AnalysisData } from "@/types/analysis";
 
 const MarketingAnalysisForm: React.FC = () => {
   const [csvFile, setCsvFile] = useState<File | null>(null);
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Get n8n webhook URL from environment variable
   const n8nWebhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL;
@@ -23,7 +24,6 @@ const MarketingAnalysisForm: React.FC = () => {
     if (event.target.files && event.target.files[0]) {
       setCsvFile(event.target.files[0]);
       setError(null);
-      setAnalysisResult(null);
     }
   };
 
@@ -39,7 +39,6 @@ const MarketingAnalysisForm: React.FC = () => {
 
     setLoading(true);
     setError(null);
-    setAnalysisResult(null);
 
     try {
       Papa.parse(csvFile, {
@@ -63,8 +62,12 @@ const MarketingAnalysisForm: React.FC = () => {
             }
 
             const result = await response.json();
-            setAnalysisResult(JSON.stringify(result, null, 2));
+            // Assuming the n8n output is a stringified JSON within a field named 'output'
+            const parsedAnalysis: AnalysisData = JSON.parse(result.output);
+            
+            navigate("/analysis-results", { state: { analysisData: parsedAnalysis } });
             showSuccess("Analysis received successfully!");
+
           } catch (fetchError: any) {
             console.error("Error sending data to webhook:", fetchError);
             setError(`Failed to get analysis from n8n: ${fetchError.message}`);
@@ -110,17 +113,6 @@ const MarketingAnalysisForm: React.FC = () => {
         {error && (
           <div className="text-red-500 text-sm text-center p-2 border border-red-300 rounded-md bg-red-50">
             {error}
-          </div>
-        )}
-
-        {analysisResult && (
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Analysis Results:</h3>
-            <Textarea
-              readOnly
-              value={analysisResult}
-              className="min-h-[200px] font-mono text-sm bg-muted/20 dark:bg-muted/20"
-            />
           </div>
         )}
       </CardContent>
