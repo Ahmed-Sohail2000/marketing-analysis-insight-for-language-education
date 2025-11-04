@@ -119,7 +119,7 @@ const MarketingAnalysisForm: React.FC = () => {
             <Textarea
               readOnly
               value={analysisResult}
-              className="min-h-[200px] font-mono text-sm bg-gray-50 dark:bg-gray-900"
+              className="min-h-[200px] font-mono text-sm bg-muted/20 dark:bg-muted/20"
             />
           </div>
         )}
