@@ -9,6 +9,7 @@ import InsightsSection from "@/components/analysis/InsightsSection";
 import AtRiskStudentsTable from "@/components/analysis/AtRiskStudentsTable";
 import CompletionRateChart from "@/components/analysis/CompletionRateChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge"; // Added this import
 import { MadeWithDyad } from "@/components/made-with-dyad";
 
 const AnalysisResults: React.FC = () => {
